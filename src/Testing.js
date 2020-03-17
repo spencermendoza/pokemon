@@ -7,24 +7,14 @@ export const Testing = () => {
         fetchData,
         displayInConsole,
         findPokemon,
+        theInput
     } = useContext(PokeContext);
-
-    function working() {
-        fetch('https://pokeapi.co/api/v2/pokemon/3')
-            .then(res => res.json())
-            .then(data => {
-                console.log(data.sprites.front_default)
-            })
-
-
-    }
 
     return (
         <>
-            <button onClick={() => displayInConsole('https://pokeapi.co/api/v2/pokemon/3')}>
-                Button!
-            </button>
-            <input type='text' defaultValue='enter a pokemon' onSubmit={() => console.log(input.value)}></input>
+            <input type='text' defaultValue='lugia' id='myInput'></input>
+            <button onClick={() => theInput()}>Submit</button>
+            <div id='putImg'></div>
         </>
     );
 }
