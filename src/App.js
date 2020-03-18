@@ -5,7 +5,10 @@ import TeamInput from './TeamInput';
 import TeamLineup from './TeamLineup';
 
 function App() {
-  const { handleDialog } = useContext(PokeContext);
+  const { handleDialog, makeList } = useContext(PokeContext);
+  document.addEventListener('DOMContentLoaded', (event) => {
+    makeList()
+  });
   return (
     <>
       <button onClick={() => { handleDialog() }}>Click to open Poke Menu</button>

@@ -1,18 +1,15 @@
 import React, { useContext } from 'react';
 import { PokeContext } from './PokeContext';
-import TeamMember from './TeamMember';
 import Dialog from '@material-ui/core/Dialog';
 
-export const TeamLineup = () => {
+export const TeamMember = () => {
     const {
         lineupDialog,
     } = useContext(PokeContext)
 
     return (
-        <div>
-            <TeamMember />
-        </div>
+        <div></div>
     );
 }
 
-export default TeamLineup;
+export default TeamMember;
