@@ -6,6 +6,28 @@ const { Provider, Consumer } = PokeContext;
 
 class PokeProvider extends Component {
 
+    state = {
+        allPokes: [],
+        inputDialog: {
+            open: false,
+        },
+        lineupDialog: {
+            open: false,
+        }
+    }
+
+    componentDidMount() {
+        // Promise.all(Promise.resolve('banana'), Promise.resolve('frutas')).then(fruit => console.log())
+        // pokes = [{...}, {...}, {...}];
+        // pokes.forEach(p => {
+        // this.getPokeDetails(p).then((pokeData) => this.setState({ pokes: [...state.pokes, pokeData.{...}]}))
+        //        })
+        // this.getPokes()
+        //     .then(p =>
+        //         Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
+        //     ).then(pokes => this.cachePokes(pokes));
+    }
+
     //Basic fetching, all this does is return the response of the fetch request, another function will handle what we should do with that response
     fetchData = (url) => {
         return fetch(url)
@@ -21,15 +43,23 @@ class PokeProvider extends Component {
 
     //this just pulls the first 150 pokemon from the pokeapi, eventually I will expand this list to include the data i need for this app but right now it is only the names of the pokemon
     //TODO: put each pokemon's type on this list
-    makeList = () => {
-        this.fetchData(`https://pokeapi.co/api/v2/pokemon/?limit=150`)
-            .then(data => {
-                const list = data.results;
-                const newList = list.map(p => {
-                    return p.name;
-                })
-                this.setState({ allPokes: newList });
-            })
+    getPokes = () => {
+        return this.fetchData(`https://pokeapi.co/api/v2/pokemon/?limit=150`)
+            .then(data => data.results)
+    }
+
+    getPokeDetails = (poke) => {
+        return this.fetchData(poke.url).then(pokeData => ({
+            name: pokeData.name,
+            img: pokeData.sprites.front_default,
+            types: pokeData.types,
+            url: poke.url,
+        }))
+    }
+
+    // take 5, brb
+    cachePokes = (pokes) => {
+        this.setState({ allPokes: pokes });
     }
 
     //This just checks to see if the user input pokemon are on this list. 
@@ -102,16 +132,6 @@ class PokeProvider extends Component {
     //     console.log(inputValue);
     // }
 
-    state = {
-        allPokes: '',
-        inputDialog: {
-            open: false,
-        },
-        lineupDialog: {
-            open: false,
-        }
-    }
-
     render() {
         return (
             <Provider
@@ -119,10 +139,13 @@ class PokeProvider extends Component {
                     ...this.state,
                     handleDialog: this.handleDialog,
                     handleConfirm: this.handleConfirm,
-                    makeList: this.makeList,
+                    getPokes: this.getPokes,
+                    cachePokes: this.cachePokes,
+                    getPokeDetails: this.getPokeDetails,
                     displayInConsole: this.displayInConsole,
                     findPokemon: this.findPokemon,
                     theInput: this.theInput,
+                    allPokes: this.state.allPokes,
                 }}
             >{this.props.children}</Provider >
         )
