@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography'
 
 function App() {
-  const { handleDialog, allPokes, getPokeDetails } = useContext(PokeContext);
+  const { handleDialog, playerTeam, getPokeDetails } = useContext(PokeContext);
 
   return (
     <>
@@ -17,11 +17,12 @@ function App() {
       <TeamLineup />
       {/* {allPokes.map(poke => <div><img src={poke.img} /><p>{poke.name}</p></div>)} */}
       <Grid container spacing={3}>
-        {allPokes.map(poke => {
+        {playerTeam.map(poke => {
           return <Grid item>
             <Paper>
               <img src={poke.img} />
               <Typography>{poke.name}</Typography>
+              {console.log(poke)}
             </Paper>
           </Grid>
         })}

@@ -12,7 +12,6 @@ export const TeamInput = () => {
     const {
         inputDialog,
         handleConfirm,
-        handleCancel,
     } = useContext(PokeContext)
 
     const first = useRef();
