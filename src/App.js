@@ -8,21 +8,19 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography'
 
 function App() {
-  const { handleDialog, playerTeam, getPokeDetails } = useContext(PokeContext);
+  const { handleDialog, playerTeam, getPokeDetails, printTypeData } = useContext(PokeContext);
 
   return (
     <>
       <button onClick={() => { handleDialog() }}>Click to open Poke Menu</button>
       <TeamInput />
       <TeamLineup />
-      {/* {allPokes.map(poke => <div><img src={poke.img} /><p>{poke.name}</p></div>)} */}
       <Grid container spacing={3}>
         {playerTeam.map(poke => {
           return <Grid item>
-            <Paper>
+            <Paper onClick={() => printTypeData(poke)}>
               <img src={poke.img} />
               <Typography>{poke.name}</Typography>
-              {console.log(poke)}
             </Paper>
           </Grid>
         })}

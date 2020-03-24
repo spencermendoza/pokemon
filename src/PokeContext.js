@@ -21,17 +21,19 @@ class PokeProvider extends Component {
         this.getPokes()
             .then(p =>
                 Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
-            ).then(pokes => this.cachePokes(pokes))
+            ).then(pokes => this.fixTypes(pokes))
+            .then(pokes => this.cachePokes(pokes))
     }
 
-    //Basic fetching, all this does is return the response of the fetch request, another function will handle what we should do with that response
+    //Basic fetching, all this does is return the response of the fetch request,
+    //another function will handle what we should do with that response
     fetchData = (url) => {
         return fetch(url)
             .then(res => res.json())
             .catch(error => console.log('Looks like you done fucked up', error));
     }
 
-    ////////////////////////////////////////////////////////Following 3 functions happen automatically inside the componentDidMount() method://////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////Following 4 functions happen automatically inside the componentDidMount() method://////////////////////////////////////////////////
 
     //this just pulls the first 150 pokemon from the pokeapi,
     //eventually I will expand this list to include the data i need for this app,
@@ -54,32 +56,30 @@ class PokeProvider extends Component {
     // take 5, brb
     cachePokes = (pokes) => {
         this.setState({ allPokes: pokes })
-        this.fixTypes(pokes);
     }
 
-    //the type property is a litte messed up. attempting to fix now.
+    //the type property is a litte messed up. parsing the 'types' array and
+    //pulling out just the type and the url associated with each pokemon
     fixTypes = (arr) => {
-        console.log(arr)
         const fixed = arr.map(p => {
             let nTypes = [];
             if (p.types.length > 1) {
                 for (var i = 0; i < p.types.length; i++) {
-                    nTypes += p.types[i].type
-                    console.log(i + ' ' + p.types[i].type)
+                    nTypes.push(p.types[i].type)
                 }
                 return {
                     ...p,
                     types: nTypes
                 };
             } else {
-                nTypes = [p.types[0]];
+                nTypes.push(p.types[0].type);
                 return {
                     ...p,
                     types: nTypes
                 };
             }
         })
-        // console.log(fixed)
+        return fixed;
     }
 
     /////////////////////////////////////////////////////////////////////////end of automatic functions/////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ class PokeProvider extends Component {
             if (stateList.includes(p)) {
                 return p;
             } else {
-                console.log('this one didnt work ' + p)
+                console.log('this one didnt work: ' + p)
                 alert('This pokemon isnt on my list! ' + p)
             }
         })
@@ -111,7 +111,8 @@ class PokeProvider extends Component {
     }
 
     //accepts an array of (lowercase) pokemon names,
-    //creates a new array containing the full pokemon object contained in state for each pokemon on the list it is given
+    //creates a new array containing the full pokemon object contained
+    //in state for each pokemon on the list it is given
     newTeam = (arr) => {
         const stateList = this.state.allPokes;
         const newTeam = arr.map(p => {
@@ -129,6 +130,10 @@ class PokeProvider extends Component {
     handleDialog = () => {
         const dialogStatus = this.state.inputDialog.open;
         this.setState({ inputDialog: { open: !dialogStatus } });
+    }
+
+    printTypeData = (url) => {
+        console.log(url.types[0].url);
     }
 
     //This just takes the team array and displays the image location in the console. soon i will use this to display the whole team directly on the page
@@ -188,6 +193,7 @@ class PokeProvider extends Component {
                     getPokes: this.getPokes,
                     cachePokes: this.cachePokes,
                     getPokeDetails: this.getPokeDetails,
+                    printTypeData: this.printTypeData,
                     displayInConsole: this.displayInConsole,
                     findPokemon: this.findPokemon,
                     theInput: this.theInput,
