@@ -12,6 +12,7 @@ function App() {
 
   return (
     <>
+      <button onClick={() => { printTypeData() }}>Click to print type data</button>
       <button onClick={() => { handleDialog() }}>Click to open Poke Menu</button>
       <TeamInput />
       <TeamLineup />

@@ -9,6 +9,7 @@ class PokeProvider extends Component {
     state = {
         allPokes: [],
         playerTeam: [],
+        types: [],
         inputDialog: {
             open: false,
         },
@@ -23,6 +24,10 @@ class PokeProvider extends Component {
                 Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
             ).then(pokes => this.fixTypes(pokes))
             .then(pokes => this.cachePokes(pokes))
+        this.getTypes()
+            .then(p =>
+                Promise.all(p.map(typeObj => this.getTypeDetails(typeObj)))
+            ).then(types => this.cacheTypes(types))
     }
 
     //Basic fetching, all this does is return the response of the fetch request,
@@ -33,7 +38,7 @@ class PokeProvider extends Component {
             .catch(error => console.log('Looks like you done fucked up', error));
     }
 
-    ////////////////////////////////////////////////////////Following 4 functions happen automatically inside the componentDidMount() method://////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////Following functions happen automatically inside the componentDidMount() method://////////////////////////////////////////////////
 
     //this just pulls the first 150 pokemon from the pokeapi,
     //eventually I will expand this list to include the data i need for this app,
@@ -53,13 +58,9 @@ class PokeProvider extends Component {
         }))
     }
 
-    // take 5, brb
-    cachePokes = (pokes) => {
-        this.setState({ allPokes: pokes })
-    }
-
     //the type property is a litte messed up. parsing the 'types' array and
     //pulling out just the type and the url associated with each pokemon
+    //thinking about renaming to 'formatTypes' or something like that
     fixTypes = (arr) => {
         const fixed = arr.map(p => {
             let nTypes = [];
@@ -80,6 +81,41 @@ class PokeProvider extends Component {
             }
         })
         return fixed;
+    }
+
+    // take 5, brb
+    cachePokes = (pokes) => {
+        this.setState({ allPokes: pokes })
+    }
+
+    //this just pulls the types out of the api
+    //still trying to figure out how to get the data from each one
+    getTypes = () => {
+        return this.fetchData(`https://pokeapi.co/api/v2/type/`)
+            .then(data => data.results)
+    }
+
+    //pulls the data I need from each type passed to it
+    getTypeDetails = (type) => {
+        return this.fetchData(type.url).then(typeData => ({
+            name: typeData.name,
+            doubleDmgFrom: typeData.damage_relations.double_damage_from,
+            doubleDmgTo: typeData.damage_relations.double_damage_to,
+            halfDmgFrom: typeData.damage_relations.half_damage_from,
+            halfDmgTo: typeData.damage_relations.half_damage_to,
+            noDmgFrom: typeData.damage_relations.no_damage_from,
+            noDmgTo: typeData.damage_relations.no_damage_to,
+            url: type.url
+        }))
+    }
+
+    //caches the array passed to it to the types prop in state
+    cacheTypes = (types) => {
+        this.setState({ types: types })
+    }
+
+    printTypeData = () => {
+        console.log(this.state.types)
     }
 
     /////////////////////////////////////////////////////////////////////////end of automatic functions/////////////////////////////////////////////////////////////////////
@@ -131,57 +167,6 @@ class PokeProvider extends Component {
         const dialogStatus = this.state.inputDialog.open;
         this.setState({ inputDialog: { open: !dialogStatus } });
     }
-
-    printTypeData = (url) => {
-        console.log(url.types[0].url);
-    }
-
-    //This just takes the team array and displays the image location in the console. soon i will use this to display the whole team directly on the page
-    //TODO: use this function to display the team to the page
-    // findImg = (team) => {
-    //     const teamImg = team.map(p => {
-    //         p = this.fetchData(`https://pokeapi.co/api/v2/pokemon/${p}`)
-    //             .then(data => {
-    //                 const test = data.sprites.front_default;
-    //                 console.log(test)
-    //             })
-    //     })
-    // }
-
-    // displayInConsole = (url) => {
-    //     this.fetchData(url)
-    //         .then(data => {
-    //             console.log(data.sprites.front_default)
-    //         })
-    // }
-
-    // findPokemon = (name) => {
-    //     const poke = name;
-    //     this.fetchData(`https://pokeapi.co/api/v2/pokemon/${poke}`)
-    //         .then(data => {
-    //             console.log(data);
-    //         })
-    // }
-
-    // showImage = (data) => {
-    //     const html = `
-    //         <img src='${data}' alt>
-    //     `;
-    //     const div = document.getElementById('putImg');
-    //     div.innerHTML = html;
-    // }
-
-    // theInput = () => {
-    //     const inputValue = document.getElementById('myInput').value;
-    //     this.fetchData(`https://pokeapi.co/api/v2/pokemon/${inputValue}`)
-    //         .then(data => {
-    //             console.log(data);
-    //             const image = data.sprites.front_default;
-    //             this.showImage(image)
-    //         })
-    //     document.getElementById('myInput').value = 'enter another pokemon';
-    //     console.log(inputValue);
-    // }
 
     render() {
         return (
