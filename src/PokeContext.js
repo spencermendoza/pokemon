@@ -114,10 +114,6 @@ class PokeProvider extends Component {
         this.setState({ types: types })
     }
 
-    printTypeData = () => {
-        console.log(this.state.types)
-    }
-
     /////////////////////////////////////////////////////////////////////////end of automatic functions/////////////////////////////////////////////////////////////////////
 
     //Handles the confirm of the dialog box, accepts the user inputted team,
@@ -127,6 +123,7 @@ class PokeProvider extends Component {
         const mainList = this.checkList(team);
         this.newTeam(mainList);
         this.handleDialog();
+        this.handleLineup();
     }
 
     //This just checks to see if the user input pokemon are on this list. 
@@ -165,7 +162,16 @@ class PokeProvider extends Component {
     //This just opens/closes the dialog box where users will enter their pokemon team
     handleDialog = () => {
         const dialogStatus = this.state.inputDialog.open;
+        console.log('dia ' + dialogStatus);
         this.setState({ inputDialog: { open: !dialogStatus } });
+        console.log('dia ' + this.state.inputDialog.open);
+    }
+
+    handleLineup = () => {
+        const lineupStatus = this.state.lineupDialog.open;
+        if (lineupStatus == false) {
+            this.setState({ lineupDialog: { open: !lineupStatus } });
+        }
     }
 
     render() {
@@ -178,11 +184,6 @@ class PokeProvider extends Component {
                     getPokes: this.getPokes,
                     cachePokes: this.cachePokes,
                     getPokeDetails: this.getPokeDetails,
-                    printTypeData: this.printTypeData,
-                    displayInConsole: this.displayInConsole,
-                    findPokemon: this.findPokemon,
-                    theInput: this.theInput,
-                    allPokes: this.state.allPokes,
                 }}
             >{this.props.children}</Provider >
         )
