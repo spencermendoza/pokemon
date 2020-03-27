@@ -49,6 +49,7 @@ class PokeProvider extends Component {
             .then(data => data.results)
     }
 
+    //simply formats the data from the API into the data I actually need to use
     getPokeDetails = (poke) => {
         return this.fetchData(poke.url).then(pokeData => ({
             name: pokeData.name,
@@ -162,16 +163,83 @@ class PokeProvider extends Component {
     //This just opens/closes the dialog box where users will enter their pokemon team
     handleDialog = () => {
         const dialogStatus = this.state.inputDialog.open;
-        console.log('dia ' + dialogStatus);
         this.setState({ inputDialog: { open: !dialogStatus } });
-        console.log('dia ' + this.state.inputDialog.open);
     }
 
+    //This just opens the lineup box containing the user's pokemon team
     handleLineup = () => {
         const lineupStatus = this.state.lineupDialog.open;
         if (lineupStatus == false) {
             this.setState({ lineupDialog: { open: !lineupStatus } });
         }
+    }
+
+    //basic function that just returns an item if it is on the array. otherwise it will return an empty object
+    findItem = (item, array) => {
+        let e = {};
+        for (let i = 0; i < array.length; i++) {
+            if (array[i].name == item.name) {
+                e = array[i];
+            }
+        }
+        return e;
+    }
+
+    //this will return the type advantages and disadvantages of each pokemon
+    getInfo = (poke) => {
+        const types = this.state.types;
+        const memberTypes = poke.types;
+        let strategy = {
+            resistantTo: [],
+            weakTo: [],
+            immuneTo: []
+        };
+        console.log(types)
+        console.log(memberTypes)
+        if (memberTypes.length == 1) {
+            strategy.resistantTo = (this.findItem(memberTypes[0], types)).halfDmgFrom;
+            strategy.weakTo = (this.findItem(memberTypes[0], types)).doubleDmgFrom;
+            strategy.immuneTo = (this.findItem(memberTypes[0], types)).noDmgFrom;
+        } else {
+            strategy.resistantTo = (this.findItem(memberTypes[0], types)).halfDmgFrom.concat((this.findItem(memberTypes[1], types)).halfDmgFrom);
+            strategy.weakTo = (this.findItem(memberTypes[0], types)).doubleDmgFrom.concat((this.findItem(memberTypes[1], types)).doubleDmgFrom);
+            strategy.immuneTo = (this.findItem(memberTypes[0], types)).noDmgFrom.concat((this.findItem(memberTypes[1], types)).noDmgFrom);
+        }
+
+        this.strategyFormatter(strategy)
+        console.log(strategy)
+        return strategy;
+    }
+
+    strategyFormatter = (strategy) => {
+        for (let i = 0; i < strategy.resistantTo.length; i++) {
+            const remove = this.findItem(strategy.resistantTo[i], strategy.weakTo)
+            if (!this.isEmpty(remove)) {
+                strategy.resistantTo.splice(i, 1);
+                for (let j = 0; j < strategy.weakTo.length; j++) {
+                    if (strategy.weakTo[j] === remove) {
+                        strategy.weakTo.splice(j, 1);
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < strategy.weakTo.length; i++) {
+            const remove = this.findItem(strategy.resistantTo[i], strategy.immuneTo)
+            if (!this.isEmpty(remove)) {
+                strategy.resistantTo.splice(i, 1);
+            }
+        }
+
+        return strategy;
+    }
+
+    isEmpty = (obj) => {
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
     }
 
     render() {
@@ -184,6 +252,7 @@ class PokeProvider extends Component {
                     getPokes: this.getPokes,
                     cachePokes: this.cachePokes,
                     getPokeDetails: this.getPokeDetails,
+                    getInfo: this.getInfo,
                 }}
             >{this.props.children}</Provider >
         )

@@ -23,19 +23,20 @@ export const TeamLineup = () => {
     const classes = useStyles();
 
     if (lineupDialog.open) {
-        console.log('open')
         return (
             <Grid className={classes.containerStyle} container spacing={3}>
                 {playerTeam.map(poke => (
-                    <TeamMember
-                        poke={poke}
-                        key={poke.name}
-                    />
-                ))}
-            </Grid>
+                    <Grid item>
+                        <TeamMember
+                            poke={poke}
+                            key={poke.name}
+                        />
+                    </Grid>
+                ))
+                }
+            </Grid >
         );
     } else {
-        console.log('not open')
         return (
             <div></div>
         )
@@ -43,17 +44,3 @@ export const TeamLineup = () => {
 }
 
 export default TeamLineup;
-
-
-
-
-// <Grid container spacing={3}>
-//             {playerTeam.map(poke => {
-//                 return <Grid item>
-//                     <Paper>
-//                         <img src={poke.img} />
-//                         <Typography>{poke.name}</Typography>
-//                     </Paper>
-//                 </Grid>
-//             })}
-//         </Grid>

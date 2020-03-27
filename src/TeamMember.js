@@ -12,13 +12,13 @@ const TeamMember = ({
     const { name, img, types, url } = poke;
     const {
         lineupDialog,
-        teamLineup
+        teamLineup,
+        getInfo
     } = useContext(PokeContext)
 
-    console.log(poke);
     return (
         <Grid>
-            <Paper>
+            <Paper onClick={() => getInfo(poke)}>
                 <img src={poke.img} />
                 <Typography>{poke.name}</Typography>
             </Paper>

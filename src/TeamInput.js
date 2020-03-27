@@ -40,27 +40,27 @@ export const TeamInput = () => {
                         type='text'
                         label='Second Pokemon'
                         inputRef={second}
-                        defaultValue='mewtwo' />
+                        defaultValue='jigglypuff' />
                     <TextField
                         type='text'
                         label='Third Pokemon'
                         inputRef={third}
-                        defaultValue='dragonair' />
+                        defaultValue='gengar' />
                     <TextField
                         type='text'
                         label='Fourth Pokemon'
                         inputRef={fourth}
-                        defaultValue='snorlax' />
+                        defaultValue='butterfree' />
                     <TextField
                         type='text'
                         label='Fifth Pokemon'
                         inputRef={fifth}
-                        defaultValue='pidgey' />
+                        defaultValue='nidoking' />
                     <TextField
                         type='text'
                         label='Sixth Pokemon'
                         inputRef={sixth}
-                        defaultValue='seaking' />
+                        defaultValue='tentacruel' />
                     <Button onClick={e => handleNewTeam()}>Confirm</Button>
                     <Button onClick={e => handleNewTeam()}>Cancel</Button>
                 </DialogContent>
