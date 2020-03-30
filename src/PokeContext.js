@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from '@testing-library/react';
+import { pokemonObj } from './pokemonObj';
 
 const PokeContext = React.createContext();
 const { Provider, Consumer } = PokeContext;
@@ -178,7 +179,7 @@ class PokeProvider extends Component {
     findItem = (item, array) => {
         let e = {};
         for (let i = 0; i < array.length; i++) {
-            if (array[i].name == item.name) {
+            if (item.name == array[i].name) {
                 e = array[i];
             }
         }
@@ -187,14 +188,15 @@ class PokeProvider extends Component {
 
     //this will return the type advantages and disadvantages of each pokemon
     getInfo = (poke) => {
+        console.log(poke)
         const types = this.state.types;
         const memberTypes = poke.types;
         let strategy = {
             resistantTo: [],
             weakTo: [],
-            immuneTo: []
+            immuneTo: [],
+            superWeakTo: [],
         };
-        console.log(types)
         console.log(memberTypes)
         if (memberTypes.length == 1) {
             strategy.resistantTo = (this.findItem(memberTypes[0], types)).halfDmgFrom;
@@ -211,6 +213,7 @@ class PokeProvider extends Component {
         return strategy;
     }
 
+    //this takes the resistances, weaknesses, and immunities and makes them consistent across all lists (one resistant will cancel out a weakness if the type is on both lists, double weaknesses will be moved to the superWeakTo property)
     strategyFormatter = (strategy) => {
         for (let i = 0; i < strategy.resistantTo.length; i++) {
             const remove = this.findItem(strategy.resistantTo[i], strategy.weakTo)
@@ -224,12 +227,26 @@ class PokeProvider extends Component {
             }
         }
 
+        let newWeaknesses = strategy.weakTo;;
+        let dblWeaknesses = [];
+
         for (let i = 0; i < strategy.weakTo.length; i++) {
-            const remove = this.findItem(strategy.resistantTo[i], strategy.immuneTo)
-            if (!this.isEmpty(remove)) {
-                strategy.resistantTo.splice(i, 1);
-            }
+            const item = strategy.weakTo.splice(i, 1);
         }
+
+        // for (let i = 0; i < strategy.weakTo.length; i++) {
+        //     for (let j = i + 1; j < strategy.weakTo.length; j++) {
+        //         if (strategy.weakTo[i].name == strategy.weakTo[j].name) {
+        //             const dbl = strategy.weakTo.splice(j, 1);
+        //             dblWeaknesses += dbl;
+        //             strategy.weakTo.splice(i, 1);
+        //         } else {
+        //             newWeaknesses += strategy.weakTo[i];
+        //         }
+        //     }
+        // }
+        strategy.weakTo = newWeaknesses;
+        strategy.superWeakTo = dblWeaknesses;
 
         return strategy;
     }
@@ -254,7 +271,7 @@ class PokeProvider extends Component {
                     getPokeDetails: this.getPokeDetails,
                     getInfo: this.getInfo,
                 }}
-            >{this.props.children}</Provider >
+            >{this.props.children}</Provider>
         )
     }
 }

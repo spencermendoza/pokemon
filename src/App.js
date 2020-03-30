@@ -20,7 +20,6 @@ function App() {
     containerStyle: {
       display: 'flex',
       justifyContent: 'center',
-      // flexDirection: 'column'
     }
   })
   const { handleDialog, playerTeam } = useContext(PokeContext);
