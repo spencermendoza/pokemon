@@ -188,7 +188,6 @@ class PokeProvider extends Component {
 
     //this will return the type advantages and disadvantages of each pokemon
     getInfo = (poke) => {
-        console.log(poke)
         const types = this.state.types;
         const memberTypes = poke.types;
         let strategy = {
@@ -196,8 +195,8 @@ class PokeProvider extends Component {
             weakTo: [],
             immuneTo: [],
             superWeakTo: [],
+            superResistantTo: [],
         };
-        console.log(memberTypes)
         if (memberTypes.length == 1) {
             strategy.resistantTo = (this.findItem(memberTypes[0], types)).halfDmgFrom;
             strategy.weakTo = (this.findItem(memberTypes[0], types)).doubleDmgFrom;
@@ -215,38 +214,62 @@ class PokeProvider extends Component {
 
     //this takes the resistances, weaknesses, and immunities and makes them consistent across all lists (one resistant will cancel out a weakness if the type is on both lists, double weaknesses will be moved to the superWeakTo property)
     strategyFormatter = (strategy) => {
-        for (let i = 0; i < strategy.resistantTo.length; i++) {
-            const remove = this.findItem(strategy.resistantTo[i], strategy.weakTo)
+        console.log(strategy)
+        let loop = strategy.resistantTo.length;
+        for (let i = 0; i < loop; i++) {
+            let remove = this.findItem(strategy.resistantTo[i], strategy.weakTo)
             if (!this.isEmpty(remove)) {
                 strategy.resistantTo.splice(i, 1);
                 for (let j = 0; j < strategy.weakTo.length; j++) {
-                    if (strategy.weakTo[j] === remove) {
+                    if (strategy.weakTo[j].name == remove.name) {
                         strategy.weakTo.splice(j, 1);
                     }
                 }
             }
         }
 
-        let newWeaknesses = strategy.weakTo;;
-        let dblWeaknesses = [];
+        let weakTo = strategy.weakTo;
+        loop = weakTo.length;
+        let newWeak = [];
+        let newSuper = [];
 
-        for (let i = 0; i < strategy.weakTo.length; i++) {
-            const item = strategy.weakTo.splice(i, 1);
+        for (let i = 0; i < loop; i++) {
+            let item = weakTo.shift();
+            for (let j = 0; j < weakTo.length; j++) {
+                if (item != undefined && item.name == weakTo[j].name) {
+                    newSuper.push(item)
+                    weakTo.splice(j, 1)
+                    item = undefined;
+                }
+            }
+            if (item != undefined) {
+                newWeak.push(item)
+            }
+        }
+        strategy.weakTo = newWeak;
+        strategy.superWeakTo = newSuper;
+
+        let resistantTo = strategy.resistantTo;
+        loop = resistantTo.length;
+        let newResistant = [];
+        newSuper = [];
+
+        for (let i = 0; i < loop; i++) {
+            let item = resistantTo.shift();
+            for (let j = 0; j < resistantTo.length; j++) {
+                if (item != undefined && item.name == resistantTo[j].name) {
+                    newSuper.push(item)
+                    resistantTo.splice(j, 1)
+                    item = undefined;
+                }
+            }
+            if (item != undefined) {
+                newResistant.push(item)
+            }
         }
 
-        // for (let i = 0; i < strategy.weakTo.length; i++) {
-        //     for (let j = i + 1; j < strategy.weakTo.length; j++) {
-        //         if (strategy.weakTo[i].name == strategy.weakTo[j].name) {
-        //             const dbl = strategy.weakTo.splice(j, 1);
-        //             dblWeaknesses += dbl;
-        //             strategy.weakTo.splice(i, 1);
-        //         } else {
-        //             newWeaknesses += strategy.weakTo[i];
-        //         }
-        //     }
-        // }
-        strategy.weakTo = newWeaknesses;
-        strategy.superWeakTo = dblWeaknesses;
+        strategy.resistantTo = newResistant;
+        strategy.superResistantTo = newSuper;
 
         return strategy;
     }
