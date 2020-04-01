@@ -22,7 +22,7 @@ const TeamMember = ({
                 <img src={poke.img} />
                 <Typography>{poke.name}</Typography>
             </Paper>
-        </Grid>
+        </Grid >
     );
 }
 

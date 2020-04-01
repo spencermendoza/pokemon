@@ -207,69 +207,96 @@ class PokeProvider extends Component {
             strategy.immuneTo = (this.findItem(memberTypes[0], types)).noDmgFrom.concat((this.findItem(memberTypes[1], types)).noDmgFrom);
         }
 
-        this.strategyFormatter(strategy)
-        console.log(strategy)
+        console.log('before format: ');
+        console.log(strategy);
+        this.strategyFormatter(strategy);
         return strategy;
     }
 
     //this takes the resistances, weaknesses, and immunities and makes them consistent across all lists (one resistant will cancel out a weakness if the type is on both lists, double weaknesses will be moved to the superWeakTo property)
     strategyFormatter = (strategy) => {
-        console.log(strategy)
-        let loop = strategy.resistantTo.length;
-        for (let i = 0; i < loop; i++) {
-            let remove = this.findItem(strategy.resistantTo[i], strategy.weakTo)
-            if (!this.isEmpty(remove)) {
-                strategy.resistantTo.splice(i, 1);
-                for (let j = 0; j < strategy.weakTo.length; j++) {
-                    if (strategy.weakTo[j].name == remove.name) {
-                        strategy.weakTo.splice(j, 1);
+        let weakTo = strategy.weakTo;
+        let resistantTo = strategy.resistantTo;
+        let immuneTo = strategy.immuneTo;
+        let rLoop = resistantTo.length;
+        let wLoop = weakTo.length;
+        let iLoop = strategy.immuneTo.length;
+
+        for (let i = 0; i < rLoop; i++) {
+            const rItem = resistantTo[i];
+            for (let j = 0; j < wLoop; j++) {
+                const wItem = weakTo[j];
+                if (rItem.name == wItem.name) {
+                    resistantTo.splice(i, 1);
+                    weakTo.splice(j, 1);
+                    i = i - 1;
+                    j = j - 1;
+                    rLoop = rLoop - 1;
+                    wLoop = wLoop - 1;
+                }
+            }
+        }
+
+        if (immuneTo.length > 0) {
+            for (let i = 0; i < rLoop; i++) {
+                const rItem = resistantTo[i];
+                for (let j = 0; j < iLoop; j++) {
+                    const iItem = immuneTo[j];
+                    if (rItem.name == iItem.name) {
+                        resistantTo.splice(i, 1);
+                        i = i - 1;
+                        rLoop = rLoop - 1;
                     }
                 }
             }
         }
 
-        let weakTo = strategy.weakTo;
-        loop = weakTo.length;
         let newWeak = [];
-        let newSuper = [];
+        let newSuperWeak = [];
 
-        for (let i = 0; i < loop; i++) {
-            let item = weakTo.shift();
+        for (let i = 0; i <= wLoop; i++) {
+            let item = undefined;
+            item = weakTo.shift();
             for (let j = 0; j < weakTo.length; j++) {
-                if (item != undefined && item.name == weakTo[j].name) {
-                    newSuper.push(item)
-                    weakTo.splice(j, 1)
+                if (item !== undefined && item.name == weakTo[j].name) {
+                    newSuperWeak.push(item);
+                    weakTo.splice(j, 1);
+                    wLoop = wLoop - 1;
                     item = undefined;
                 }
             }
-            if (item != undefined) {
-                newWeak.push(item)
+            if (item !== undefined) {
+                newWeak.push(item);
             }
         }
+
         strategy.weakTo = newWeak;
-        strategy.superWeakTo = newSuper;
+        strategy.superWeakTo = newSuperWeak;
 
-        let resistantTo = strategy.resistantTo;
-        loop = resistantTo.length;
         let newResistant = [];
-        newSuper = [];
+        let newSuperResistant = [];
 
-        for (let i = 0; i < loop; i++) {
-            let item = resistantTo.shift();
+        for (let i = 0; i < rLoop; i++) {
+            let item = undefined;
+            item = resistantTo.shift();
             for (let j = 0; j < resistantTo.length; j++) {
-                if (item != undefined && item.name == resistantTo[j].name) {
-                    newSuper.push(item)
-                    resistantTo.splice(j, 1)
+                if (item !== undefined && item.name == resistantTo[j].name) {
+                    newSuperResistant.push(item);
+                    resistantTo.splice(j, 1);
+                    rLoop = rLoop - 1;
                     item = undefined;
                 }
             }
-            if (item != undefined) {
+            if (item !== undefined) {
                 newResistant.push(item)
             }
         }
 
         strategy.resistantTo = newResistant;
-        strategy.superResistantTo = newSuper;
+        strategy.superResistantTo = newSuperResistant;
+
+        console.log('after format:')
+        console.log(strategy)
 
         return strategy;
     }
