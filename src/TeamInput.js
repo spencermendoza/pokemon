@@ -35,12 +35,12 @@ export const TeamInput = () => {
                         type='text'
                         label='First Pokemon'
                         inputRef={first}
-                        defaultValue='venusaur' />
+                        defaultValue='tangela' />
                     <TextField
                         type='text'
                         label='Second Pokemon'
                         inputRef={second}
-                        defaultValue='gyarados' />
+                        defaultValue='dragonite' />
                     <TextField
                         type='text'
                         label='Third Pokemon'

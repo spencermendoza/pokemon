@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { render } from '@testing-library/react';
-import { pokemonObj } from './pokemonObj';
+import { PokemonObj } from './PokemonObj';
+
+//TODO: somehow fit the PokemonObj class into the list. I want to fully format each object w the data I need for this app and store the whole thing in state. 
+//That way I don't need to keep making fetch calls back to the API, I will fetch all the data I need at once and be done with it.
 
 const PokeContext = React.createContext();
 const { Provider, Consumer } = PokeContext;
@@ -19,16 +21,21 @@ class PokeProvider extends Component {
         }
     }
 
+    //this function runs as soon as the app loads. fetches and caches all the pokemon and type data I need
     componentDidMount() {
-        this.getPokes()
-            .then(p =>
-                Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
-            ).then(pokes => this.fixTypes(pokes))
-            .then(pokes => this.cachePokes(pokes))
         this.getTypes()
             .then(p =>
                 Promise.all(p.map(typeObj => this.getTypeDetails(typeObj)))
-            ).then(types => this.cacheTypes(types))
+                    .then(types => this.cacheTypes(types))
+            )
+
+        this.getPokes()
+            .then(p =>
+                Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
+                    .then(pokes => this.fixTypes(pokes))
+                    // .then(pokes => this.formatStrategy(pokes))
+                    .then(pokes => this.cachePokes(pokes))
+            )
     }
 
     //Basic fetching, all this does is return the response of the fetch request,
@@ -116,6 +123,14 @@ class PokeProvider extends Component {
         this.setState({ types: types })
     }
 
+    formatStrategy = (pokes) => {
+        let allPokes = pokes;
+        let formatted = pokes.map(p => {
+            this.getInfo(p);
+        })
+        return formatted;
+    }
+
     /////////////////////////////////////////////////////////////////////////end of automatic functions/////////////////////////////////////////////////////////////////////
 
     //Handles the confirm of the dialog box, accepts the user inputted team,
@@ -175,17 +190,6 @@ class PokeProvider extends Component {
         }
     }
 
-    //basic function that just returns an item if it is on the array. otherwise it will return an empty object
-    findItem = (item, array) => {
-        let e = {};
-        for (let i = 0; i < array.length; i++) {
-            if (item.name == array[i].name) {
-                e = array[i];
-            }
-        }
-        return e;
-    }
-
     //this will return the type advantages and disadvantages of each pokemon
     getInfo = (poke) => {
         const types = this.state.types;
@@ -207,20 +211,30 @@ class PokeProvider extends Component {
             strategy.immuneTo = (this.findItem(memberTypes[0], types)).noDmgFrom.concat((this.findItem(memberTypes[1], types)).noDmgFrom);
         }
 
-        console.log('before format: ');
-        console.log(strategy);
-        this.strategyFormatter(strategy);
+        strategy = this.strategyFormatter(strategy);
+
+        poke.strategy = strategy;
+        console.log(poke)
+
+        return poke;
+    }
+
+    //this takes the strategy object and runs it through four different formatters
+    strategyFormatter = (strategy) => {
+        strategy = this.resistantWeaknessBalancer(strategy);
+        strategy = this.resistantToImmuneBalancer(strategy);
+        strategy = this.superWeakToBalancer(strategy);
+        strategy = this.superResistantToBalancer(strategy);
+
         return strategy;
     }
 
-    //this takes the resistances, weaknesses, and immunities and makes them consistent across all lists (one resistant will cancel out a weakness if the type is on both lists, double weaknesses will be moved to the superWeakTo property)
-    strategyFormatter = (strategy) => {
-        let weakTo = strategy.weakTo;
+    //this takes the resistant list and weakness list and compares them. if a type appears on both lists (dual typing) it will remove that type from both lists
+    resistantWeaknessBalancer = (strategy) => {
         let resistantTo = strategy.resistantTo;
-        let immuneTo = strategy.immuneTo;
+        let weakTo = strategy.weakTo;
         let rLoop = resistantTo.length;
         let wLoop = weakTo.length;
-        let iLoop = strategy.immuneTo.length;
 
         for (let i = 0; i < rLoop; i++) {
             const rItem = resistantTo[i];
@@ -237,6 +251,19 @@ class PokeProvider extends Component {
             }
         }
 
+        strategy.resistantTo = resistantTo;
+        strategy.weakTo = weakTo;
+
+        return strategy;
+    }
+
+    //this checks if a type is on both resistantTo and immuneTo and removes the type from the resistant to list (don't want that type to be counted twice)
+    resistantToImmuneBalancer = (strategy) => {
+        let resistantTo = strategy.resistantTo;
+        let immuneTo = strategy.immuneTo;
+        let rLoop = resistantTo.length;
+        let iLoop = immuneTo.length;
+
         if (immuneTo.length > 0) {
             for (let i = 0; i < rLoop; i++) {
                 const rItem = resistantTo[i];
@@ -251,6 +278,15 @@ class PokeProvider extends Component {
             }
         }
 
+        strategy.resistantTo = resistantTo;
+
+        return strategy;
+    }
+
+    //This checks if a type is on the weakness list twice. if it is this will remove both instances of the type from the list and move them to the superWeakTo list
+    superWeakToBalancer = (strategy) => {
+        let weakTo = strategy.weakTo;
+        let wLoop = weakTo.length;
         let newWeak = [];
         let newSuperWeak = [];
 
@@ -273,6 +309,13 @@ class PokeProvider extends Component {
         strategy.weakTo = newWeak;
         strategy.superWeakTo = newSuperWeak;
 
+        return strategy;
+    }
+
+    //this checks if a type is on the resistant list twice. if it is this will remove both instances of the type from the list and move them to the superResistantTo list
+    superResistantToBalancer = (strategy) => {
+        let resistantTo = strategy.resistantTo;
+        let rLoop = resistantTo.length;
         let newResistant = [];
         let newSuperResistant = [];
 
@@ -295,18 +338,31 @@ class PokeProvider extends Component {
         strategy.resistantTo = newResistant;
         strategy.superResistantTo = newSuperResistant;
 
-        console.log('after format:')
-        console.log(strategy)
-
         return strategy;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////Functional functions: these functions don't work directly on this app, they were just written to assist with other functions that do help with the app//////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //simply checks if an object is empty or not. returns bool
     isEmpty = (obj) => {
         for (var key in obj) {
             if (obj.hasOwnProperty(key))
                 return false;
         }
         return true;
+    }
+
+    //basic function that just returns an item if it is on the array. otherwise it will return an empty object
+    findItem = (item, array) => {
+        let e = {};
+        for (let i = 0; i < array.length; i++) {
+            if (item.name == array[i].name) {
+                e = array[i];
+            }
+        }
+        return e;
     }
 
     render() {
