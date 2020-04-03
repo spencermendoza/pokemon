@@ -23,19 +23,49 @@ class PokeProvider extends Component {
 
     //this function runs as soon as the app loads. fetches and caches all the pokemon and type data I need
     componentDidMount() {
-        this.getTypes()
-            .then(p =>
-                Promise.all(p.map(typeObj => this.getTypeDetails(typeObj)))
-                    .then(types => this.cacheTypes(types))
-            )
+        // Get all the details first, before we start working with them.
+        Promise.all([this.getPokes(), this.getTypes()]).then(([pokes, types]) => {
+            return Promise.all([
+                Promise.all(pokes.map(pokeObj => this.getPokeDetails(pokeObj))),
+                Promise.all(types.map(typeObj => this.getTypeDetails(typeObj)))
+            ])
+        })
+            .then(
+                ([pokeDetails, typeDetails]) => {
+                    // TODO: Finalize types and pokes here!
+                    // console.log('pokeDetails?', pokeDetails, 'typeDetails?', typeDetails)
 
-        this.getPokes()
-            .then(p =>
-                Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
-                    .then(pokes => this.fixTypes(pokes))
-                    // .then(pokes => this.formatStrategy(pokes))
-                    .then(pokes => this.cachePokes(pokes))
-            )
+                    const fixedPokes = this.fixTypes(pokeDetails);
+                    // const fixedPokes = pokeDetails.map(poke => ({ ...poke, types: this.fixTypes(poke.types) }))
+                    console.log('fixedPokes?', fixedPokes);
+                    this.cacheTypes(typeDetails);
+                    // this.formatStrategy(pokeDetails, typeDetails);      do i need this idk
+                    const formattedPokes = fixedPokes.map(p => this.getInfo(p, typeDetails))
+                    console.log('formattedPokes?', formattedPokes);
+
+                    this.cachePokes(formattedPokes);
+                })
+
+
+
+        // function add(n1, n2) {
+        //     return n1 + n2;
+        // }
+
+        // add(1, 5);
+        // this.getTypes()
+        //     .then(p =>
+        //         Promise.all(p.map(typeObj => this.getTypeDetails(typeObj)))
+        //     )
+        //     .then(types => this.cacheTypes(types))
+
+        //     .then(() => this.getPokes())
+        //     .then(p =>
+        //         Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
+        //     )
+        //     .then(pokes => this.fixTypes(pokes))
+        //     .then(pokes => this.cachePokes(pokes))
+        //     .then(pokes => this.formatStrategy())
     }
 
     //Basic fetching, all this does is return the response of the fetch request,
@@ -123,13 +153,13 @@ class PokeProvider extends Component {
         this.setState({ types: types })
     }
 
-    formatStrategy = (pokes) => {
-        let allPokes = pokes;
-        let formatted = pokes.map(p => {
-            this.getInfo(p);
-        })
-        return formatted;
-    }
+    // formatStrategy = (pokes, types) => {
+    //     // DON'T DO DISSSSSSS
+    //     const formatted = pokes.map(p => {
+    //         return this.getInfo(p)
+    //     })
+    //     console.log('formatted?', formatted);
+    // }
 
     /////////////////////////////////////////////////////////////////////////end of automatic functions/////////////////////////////////////////////////////////////////////
 
@@ -191,8 +221,7 @@ class PokeProvider extends Component {
     }
 
     //this will return the type advantages and disadvantages of each pokemon
-    getInfo = (poke) => {
-        const types = this.state.types;
+    getInfo = (poke, types) => {
         const memberTypes = poke.types;
         let strategy = {
             resistantTo: [],
@@ -214,7 +243,6 @@ class PokeProvider extends Component {
         strategy = this.strategyFormatter(strategy);
 
         poke.strategy = strategy;
-        console.log(poke)
 
         return poke;
     }
@@ -377,7 +405,7 @@ class PokeProvider extends Component {
                     getPokeDetails: this.getPokeDetails,
                     getInfo: this.getInfo,
                 }}
-            >{this.props.children}</Provider>
+            > {this.props.children}</Provider >
         )
     }
 }
