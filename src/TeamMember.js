@@ -3,6 +3,10 @@ import { PokeContext } from './PokeContext';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 
 const TeamMember = ({
@@ -13,24 +17,7 @@ const TeamMember = ({
     const {
         lineupDialog,
         teamLineup,
-        getInfo
     } = useContext(PokeContext)
-
-    function FormRow(poke) {
-        return (
-            <React.Fragment>
-                <Grid>
-                    <Paper>
-                        <Typography>Resistances (2x): {poke.resistantTo}</Typography>
-                        <Typography>Weaknesses (2x): {poke.weakTo}</Typography>
-                        <Typography>Immunities (0x): {poke.immuneTo}</Typography>
-                        <Typography>Double resistant to (4x): {poke.superResistantTo}</Typography>
-                        <Typography>Double weak to (4x): {poke.superWeakTo}</Typography>
-                    </Paper>
-                </Grid>
-            </React.Fragment>
-        )
-    }
 
     return (
         <Grid
@@ -39,10 +26,20 @@ const TeamMember = ({
             justify="center"
             alignItems="center"
         >
-            <Paper>
-                <img src={poke.img} />
-                <Typography>{poke.name}</Typography>
-            </Paper>
+            <Card>
+                <ExpansionPanel>
+                    <ExpansionPanelSummary>
+                        <img src={poke.img} />
+                        <Typography>{poke.name}</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                        <Typography>Resistances (2x):</Typography>
+                        {poke.strategy.resistantTo.map(e =>
+                            <Typography>{e.name}</Typography>
+                        )}
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
+            </Card>
         </Grid >
     );
 }

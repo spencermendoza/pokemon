@@ -11,8 +11,9 @@ class PokeProvider extends Component {
 
     state = {
         allPokes: [],
-        playerTeam: [],
         types: [],
+        playerTeam: [],
+        thisPoke: {},
         inputDialog: {
             open: false,
         },
@@ -182,7 +183,7 @@ class PokeProvider extends Component {
     //This just opens the lineup box containing the user's pokemon team
     handleLineup = () => {
         const lineupStatus = this.state.lineupDialog.open;
-        if (lineupStatus == false) {
+        if (lineupStatus === false) {
             this.setState({ lineupDialog: { open: !lineupStatus } });
         }
     }
