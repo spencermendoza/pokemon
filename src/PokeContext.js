@@ -33,39 +33,11 @@ class PokeProvider extends Component {
             .then(
                 ([pokeDetails, typeDetails]) => {
                     // TODO: Finalize types and pokes here!
-                    // console.log('pokeDetails?', pokeDetails, 'typeDetails?', typeDetails)
-
                     const fixedPokes = this.fixTypes(pokeDetails);
-                    // const fixedPokes = pokeDetails.map(poke => ({ ...poke, types: this.fixTypes(poke.types) }))
-                    console.log('fixedPokes?', fixedPokes);
                     this.cacheTypes(typeDetails);
-                    // this.formatStrategy(pokeDetails, typeDetails);      do i need this idk
-                    const formattedPokes = fixedPokes.map(p => this.getInfo(p, typeDetails))
-                    console.log('formattedPokes?', formattedPokes);
-
-                    this.cachePokes(formattedPokes);
+                    const addNewProp = this.addStrat(fixedPokes);
+                    this.cachePokes(addNewProp);
                 })
-
-
-
-        // function add(n1, n2) {
-        //     return n1 + n2;
-        // }
-
-        // add(1, 5);
-        // this.getTypes()
-        //     .then(p =>
-        //         Promise.all(p.map(typeObj => this.getTypeDetails(typeObj)))
-        //     )
-        //     .then(types => this.cacheTypes(types))
-
-        //     .then(() => this.getPokes())
-        //     .then(p =>
-        //         Promise.all(p.map(pokeObj => this.getPokeDetails(pokeObj)))
-        //     )
-        //     .then(pokes => this.fixTypes(pokes))
-        //     .then(pokes => this.cachePokes(pokes))
-        //     .then(pokes => this.formatStrategy())
     }
 
     //Basic fetching, all this does is return the response of the fetch request,
@@ -150,16 +122,8 @@ class PokeProvider extends Component {
 
     //caches the array passed to it to the types prop in state
     cacheTypes = (types) => {
-        this.setState({ types: types })
+        this.setState({ types: types });
     }
-
-    // formatStrategy = (pokes, types) => {
-    //     // DON'T DO DISSSSSSS
-    //     const formatted = pokes.map(p => {
-    //         return this.getInfo(p)
-    //     })
-    //     console.log('formatted?', formatted);
-    // }
 
     /////////////////////////////////////////////////////////////////////////end of automatic functions/////////////////////////////////////////////////////////////////////
 
@@ -195,14 +159,17 @@ class PokeProvider extends Component {
     //in state for each pokemon on the list it is given
     newTeam = (arr) => {
         const stateList = this.state.allPokes;
-        const newTeam = arr.map(p => {
+        let newTeam = arr.map(p => {
             for (let i = 0; i < stateList.length; i++) {
                 if (p == stateList[i].name) {
                     return stateList[i];
                 }
             }
         })
+
+        newTeam = this.addStrat(newTeam);
         this.setState({ playerTeam: newTeam });
+        console.log(newTeam);
         return newTeam;
     }
 
@@ -220,9 +187,21 @@ class PokeProvider extends Component {
         }
     }
 
+    //throwaway function to see if i could loop through all pokemon and add the strategy prop to each one. Still not working.
+    addStrat = (pokes) => {
+        const oldPokeObj = pokes;
+
+        const newPokeObj = pokes.map(p => {
+            return this.getInfo(p);
+        })
+
+        return newPokeObj;
+    }
+
     //this will return the type advantages and disadvantages of each pokemon
-    getInfo = (poke, types) => {
+    getInfo = (poke) => {
         const memberTypes = poke.types;
+        const types = this.state.types;
         let strategy = {
             resistantTo: [],
             weakTo: [],
@@ -230,17 +209,19 @@ class PokeProvider extends Component {
             superWeakTo: [],
             superResistantTo: [],
         };
-        if (memberTypes.length == 1) {
-            strategy.resistantTo = (this.findItem(memberTypes[0], types)).halfDmgFrom;
+        if (memberTypes.length === 1) {
+            strategy.resistantTo = this.findItem(memberTypes[0], types).halfDmgFrom;
             strategy.weakTo = (this.findItem(memberTypes[0], types)).doubleDmgFrom;
             strategy.immuneTo = (this.findItem(memberTypes[0], types)).noDmgFrom;
-        } else {
+        }
+        else {
             strategy.resistantTo = (this.findItem(memberTypes[0], types)).halfDmgFrom.concat((this.findItem(memberTypes[1], types)).halfDmgFrom);
             strategy.weakTo = (this.findItem(memberTypes[0], types)).doubleDmgFrom.concat((this.findItem(memberTypes[1], types)).doubleDmgFrom);
             strategy.immuneTo = (this.findItem(memberTypes[0], types)).noDmgFrom.concat((this.findItem(memberTypes[1], types)).noDmgFrom);
+            strategy = this.strategyFormatter(strategy);
         }
 
-        strategy = this.strategyFormatter(strategy);
+
 
         poke.strategy = strategy;
 
@@ -386,7 +367,7 @@ class PokeProvider extends Component {
     findItem = (item, array) => {
         let e = {};
         for (let i = 0; i < array.length; i++) {
-            if (item.name == array[i].name) {
+            if (item.name === array[i].name) {
                 e = array[i];
             }
         }
@@ -404,6 +385,7 @@ class PokeProvider extends Component {
                     cachePokes: this.cachePokes,
                     getPokeDetails: this.getPokeDetails,
                     getInfo: this.getInfo,
+                    addStrat: this.addStrat
                 }}
             > {this.props.children}</Provider >
         )

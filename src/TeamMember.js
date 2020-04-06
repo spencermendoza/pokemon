@@ -39,7 +39,7 @@ const TeamMember = ({
             justify="center"
             alignItems="center"
         >
-            <Paper onClick={() => getInfo(poke, types)}>
+            <Paper>
                 <img src={poke.img} />
                 <Typography>{poke.name}</Typography>
             </Paper>

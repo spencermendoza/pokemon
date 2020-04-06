@@ -35,7 +35,7 @@ export const TeamInput = () => {
                         type='text'
                         label='First Pokemon'
                         inputRef={first}
-                        defaultValue='tangela' />
+                        defaultValue='mewtwo' />
                     <TextField
                         type='text'
                         label='Second Pokemon'

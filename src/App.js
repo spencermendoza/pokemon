@@ -22,7 +22,7 @@ function App() {
       justifyContent: 'center',
     }
   })
-  const { handleDialog, playerTeam } = useContext(PokeContext);
+  const { handleDialog, playerTeam, addStrat } = useContext(PokeContext);
 
   const classes = useStyles();
 
