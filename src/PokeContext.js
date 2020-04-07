@@ -121,6 +121,19 @@ class PokeProvider extends Component {
         }))
     }
 
+    // getTypeDetails = (type) => {
+    //     return this.fetchData(type.url).then(typeData => ({
+    //         name: this.capitalizeFirstLetter(typeData.name),
+    //         doubleDmgFrom: this.capitalizeFirstLetter(typeData.damage_relations.double_damage_from),
+    //         doubleDmgTo: this.capitalizeFirstLetter(typeData.damage_relations.double_damage_to),
+    //         halfDmgFrom: this.capitalizeFirstLetter(typeData.damage_relations.half_damage_from),
+    //         halfDmgTo: this.capitalizeFirstLetter(typeData.damage_relations.half_damage_to),
+    //         noDmgFrom: this.capitalizeFirstLetter(typeData.damage_relations.no_damage_from),
+    //         noDmgTo: this.capitalizeFirstLetter(typeData.damage_relations.no_damage_to),
+    //         url: type.url
+    //     }))
+    // }
+
     //caches the array passed to it to the types prop in state
     cacheTypes = (types) => {
         this.setState({ types: types });
@@ -168,10 +181,58 @@ class PokeProvider extends Component {
             }
         })
 
-        newTeam = this.addStrat(newTeam);
+        newTeam = this.formatTeam(newTeam);
         this.setState({ playerTeam: newTeam });
         console.log(newTeam);
         return newTeam;
+    }
+
+    formatTeam = (team) => {
+        let newTeam = team.map(member => {
+            member = this.getInfo(member);
+            member.name = this.capitalizeFirstLetter(member.name);
+            member = this.loopThroughTypes(member);
+            member = this.loopThroughStrategy(member);
+            return member;
+        });
+        return newTeam;
+    }
+
+    //This loops through the strategy object on each pokemon and capitalizes the type name 
+    loopThroughStrategy = (poke) => {
+        let newStratList = Object.keys(poke.strategy);
+        let newStrat = poke.strategy;
+
+        for (let i = 0; i < newStratList.length; i++) {
+            let thisStrat = newStratList[i];
+            for (let j = 0; j < newStrat[thisStrat].length; j++) {
+                newStrat[thisStrat][j].name = this.capitalizeFirstLetter(newStrat[thisStrat][j].name);
+            }
+        }
+        poke.strategy = newStrat;
+        return poke;
+    }
+
+    //This just loops through the names of the types of each pokemon and capitalizes them
+    loopThroughTypes = (poke) => {
+        let types = poke.types;
+        types[0].name = this.capitalizeFirstLetter(types[0].name);
+        if (types.length > 1) {
+            types[1].name = this.capitalizeFirstLetter(types[1].name);
+        }
+        poke.types = types;
+        return poke;
+    }
+
+    //This just loops through the names of the pokemon team and capitalises the first letter of each one
+    loopThroughNames = (pokeTeam) => {
+        let updateNames = pokeTeam.map(p => {
+            return {
+                ...p,
+                name: this.capitalizeFirstLetter(p.name)
+            }
+        })
+        return updateNames;
     }
 
     //This just opens/closes the dialog box where users will enter their pokemon team
@@ -190,7 +251,7 @@ class PokeProvider extends Component {
 
     //throwaway function to see if i could loop through all pokemon and add the strategy prop to each one. Still not working.
     addStrat = (pokes) => {
-        const oldPokeObj = pokes;
+        // const oldPokeObj = pokes;
 
         const newPokeObj = pokes.map(p => {
             return this.getInfo(p);
@@ -354,6 +415,15 @@ class PokeProvider extends Component {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////Functional functions: these functions don't work directly on this app, they were just written to assist with other functions that do help with the app//////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    loopThrough = (array) => {
+
+    }
+
+    //This just capitalizes the first letter of any string passed to it
+    capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
     //simply checks if an object is empty or not. returns bool
     isEmpty = (obj) => {
