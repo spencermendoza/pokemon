@@ -2,8 +2,7 @@ import React, { useContext } from 'react';
 import { PokeContext } from './PokeContext';
 import TeamMember from './TeamMember';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import GridList from '@material-ui/core/GridList';
 import { makeStyles } from '@material-ui/core/styles';
 
 export const TeamLineup = () => {
@@ -11,8 +10,17 @@ export const TeamLineup = () => {
     const useStyles = makeStyles({
         containerStyle: {
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
+            flexDirection: 'column',
+            margin: '0 auto',
+            width: '75%',
+            height: 'auto',
+            padding: '.5% 0 .5% 1%',
+            alignContent: 'space-between'
         },
+        poke: {
+            marginTop: '2%'
+        }
     })
 
     const {
@@ -24,17 +32,16 @@ export const TeamLineup = () => {
 
     if (lineupDialog.open) {
         return (
-            <Grid className={classes.containerStyle} container spacing={3}>
+            <GridList className={classes.containerStyle} spacing={3}>
                 {playerTeam.map(poke => (
-                    <Grid item>
-                        <TeamMember
-                            poke={poke}
-                            key={poke.name}
-                        />
-                    </Grid>
+                    <TeamMember
+                        className={classes.poke}
+                        poke={poke}
+                        key={poke.name}
+                    />
                 ))
                 }
-            </Grid >
+            </GridList >
         );
     } else {
         return (

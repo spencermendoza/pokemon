@@ -20,6 +20,9 @@ function App() {
     containerStyle: {
       display: 'flex',
       justifyContent: 'center',
+      margin: '0 auto',
+      width: '50%',
+      height: '100%'
     }
   })
   const { handleDialog, playerTeam, addStrat } = useContext(PokeContext);
