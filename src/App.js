@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { PokeContext } from './PokeContext';
 import Testing from './Testing';
 import TeamInput from './TeamInput';
@@ -15,30 +15,41 @@ function App() {
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'column',
-      margin: '1%'
+      margin: '1%',
+      backgroundColor: 'blue',
+      color: 'white',
+      border: '1px solid white',
+      height: '30px',
     },
     containerStyle: {
       display: 'flex',
       justifyContent: 'center',
       margin: '0 auto',
-      width: '50%',
-      height: '100%'
+      width: '25%',
+      height: '100%',
+    },
+    containerStyleTwo: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      flexDirection: 'row'
     }
   })
-  const { handleDialog, playerTeam, addStrat } = useContext(PokeContext);
+  const { handleDialog, playerTeam, addStrat, lineupDialog } = useContext(PokeContext);
 
   const classes = useStyles();
 
+
   return (
-    <>
+    <div>
       <Box className={classes.containerStyle}>
-        <button className={classes.buttonStyle} onClick={() => { handleDialog() }}>Click to open Poke Menu</button>
+        <button className={classes.buttonStyle} onClick={() => { handleDialog() }}>Enter Team</button>
         <TeamInput />
       </Box>
-      <Box>
+      <Box className={classes.containerStyleTwo}>
         <TeamLineup />
+        <button className={classes.buttonStyle}>Show Strategy</button>
       </Box>
-    </>
+    </div>
   )
 }
 

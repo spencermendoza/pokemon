@@ -19,7 +19,10 @@ class PokeProvider extends Component {
         },
         lineupDialog: {
             open: false,
-        }
+        },
+        strategyDisplay: {
+            open: false,
+        },
     }
 
     //this function runs as soon as the app loads. fetches and caches all the pokemon and type data I need
@@ -120,19 +123,6 @@ class PokeProvider extends Component {
             url: type.url
         }))
     }
-
-    // getTypeDetails = (type) => {
-    //     return this.fetchData(type.url).then(typeData => ({
-    //         name: this.capitalizeFirstLetter(typeData.name),
-    //         doubleDmgFrom: this.capitalizeFirstLetter(typeData.damage_relations.double_damage_from),
-    //         doubleDmgTo: this.capitalizeFirstLetter(typeData.damage_relations.double_damage_to),
-    //         halfDmgFrom: this.capitalizeFirstLetter(typeData.damage_relations.half_damage_from),
-    //         halfDmgTo: this.capitalizeFirstLetter(typeData.damage_relations.half_damage_to),
-    //         noDmgFrom: this.capitalizeFirstLetter(typeData.damage_relations.no_damage_from),
-    //         noDmgTo: this.capitalizeFirstLetter(typeData.damage_relations.no_damage_to),
-    //         url: type.url
-    //     }))
-    // }
 
     //caches the array passed to it to the types prop in state
     cacheTypes = (types) => {

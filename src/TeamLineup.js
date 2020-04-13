@@ -13,14 +13,11 @@ export const TeamLineup = () => {
             justifyContent: 'flex-start',
             flexDirection: 'column',
             margin: '0 auto',
-            width: '75%',
+            width: '40%',
             height: 'auto',
             padding: '.5% 0 .5% 1%',
             alignContent: 'space-between'
         },
-        poke: {
-            marginTop: '2%'
-        }
     })
 
     const {
@@ -35,7 +32,6 @@ export const TeamLineup = () => {
             <GridList className={classes.containerStyle} spacing={3}>
                 {playerTeam.map(poke => (
                     <TeamMember
-                        className={classes.poke}
                         poke={poke}
                         key={poke.name}
                     />

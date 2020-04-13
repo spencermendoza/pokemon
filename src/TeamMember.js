@@ -9,6 +9,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { findByLabelText } from '@testing-library/react';
 
 const TeamMember = ({
     poke = {},
@@ -24,6 +25,26 @@ const TeamMember = ({
         wholeThing: {
             marginTop: '2%',
             width: '50%',
+            backgroundColor: 'blue',
+        },
+        fullPanel: {
+            backgroundColor: 'blue',
+            color: 'white',
+            border: '2px solid white'
+        },
+        pokeStrats: {
+            maxWidth: '100%',
+            display: 'flex',
+            flexWrap: 'wrap',
+            flexDirection: 'column',
+            backgroundColor: 'blue',
+            color: 'white',
+        },
+        stratPanel: {
+            backgroundColor: 'blue',
+            color: 'white',
+            border: '1px solid white',
+            margin: '5px'
         }
     })
 
@@ -31,83 +52,110 @@ const TeamMember = ({
 
     return (
         <div className={classes.wholeThing}>
-            <ExpansionPanel>
+            <ExpansionPanel className={classes.fullPanel}>
                 <ExpansionPanelSummary>
                     <img src={poke.img} />
                     <Typography variant='h6'>{poke.name}</Typography>
                     <ul>
                         {poke.types.map(t =>
-                            <li><Typography>{t.name}</Typography></li>
+                            <ul>
+                                <li>
+                                    <Typography>{t.name}</Typography>
+                                </li>
+                            </ul>
                         )}
                     </ul>
                 </ExpansionPanelSummary>
 
                 <ExpansionPanelDetails>
 
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary>
-                            <Typography variant='h5'>Resistances ({poke.strategy.resistantTo.length}):</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            {poke.strategy.resistantTo.map(e =>
-                                <>
-                                    <Typography>{e.name}</Typography>
-                                </>
-                            )}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
 
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary>
-                            <Typography variant='h5'>Weaknesses ({poke.strategy.weakTo.length}):</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            {poke.strategy.weakTo.map(e =>
-                                <>
-                                    <Typography>{e.name}</Typography>
-                                </>
-                            )}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                    <ul>
+                        <li>
+                            <ExpansionPanel className={classes.stratPanel}>
+                                <ExpansionPanelSummary>
+                                    <Typography variant='h5'>Resistances ({poke.strategy.resistantTo.length})</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails className={classes.pokeStrats}>
+                                    {poke.strategy.resistantTo.map(e =>
+                                        <ul className={classes.pokeStrats}>
+                                            <li>
+                                                <Typography>{e.name}</Typography>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </li>
 
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary>
-                            <Typography variant='h5'>Immunities ({poke.strategy.immuneTo.length}):</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            {poke.strategy.immuneTo.map(e =>
-                                <>
-                                    <Typography>{e.name}</Typography>
-                                </>
-                            )}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                        <li>
+                            <ExpansionPanel className={classes.stratPanel}>
+                                <ExpansionPanelSummary>
+                                    <Typography variant='h5'>Weaknesses ({poke.strategy.weakTo.length})</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails className={classes.pokeStrats}>
+                                    {poke.strategy.weakTo.map(e =>
+                                        <ul>
+                                            <li>
+                                                <Typography>{e.name}</Typography>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </li>
 
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary>
-                            <Typography variant='h5'>Double Resistances ({poke.strategy.superResistantTo.length}):</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            {poke.strategy.superResistantTo.map(e =>
-                                <>
-                                    <Typography>{e.name}</Typography>
-                                </>
-                            )}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                        <li>
+                            <ExpansionPanel className={classes.stratPanel}>
+                                <ExpansionPanelSummary>
+                                    <Typography variant='h5'>Immunities ({poke.strategy.immuneTo.length})</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails className={classes.pokeStrats}>
+                                    {poke.strategy.immuneTo.map(e =>
+                                        <ul>
+                                            <li>
+                                                <Typography>{e.name}</Typography>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </li>
 
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary>
-                            <Typography variant='h5'>Double Weaknesses ({poke.strategy.superWeakTo.length}):</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            {poke.strategy.superWeakTo.map(e =>
-                                <>
-                                    <Typography>{e.name}</Typography>
-                                </>
-                            )}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                        <li>
+                            <ExpansionPanel className={classes.stratPanel}>
+                                <ExpansionPanelSummary>
+                                    <Typography variant='h5'>Double Resistances ({poke.strategy.superResistantTo.length})</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails className={classes.pokeStrats}>
+                                    {poke.strategy.superResistantTo.map(e =>
+                                        <ul>
+                                            <li>
+                                                <Typography>{e.name}</Typography>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </li>
+
+                        <li>
+                            <ExpansionPanel className={classes.stratPanel}>
+                                <ExpansionPanelSummary>
+                                    <Typography variant='h5'>Double Weaknesses ({poke.strategy.superWeakTo.length})</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails className={classes.pokeStrats}>
+                                    {poke.strategy.superWeakTo.map(e =>
+                                        <ul>
+                                            <li>
+                                                <Typography>{e.name}</Typography>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </li>
+                    </ul>
 
                 </ExpansionPanelDetails>
             </ExpansionPanel>
