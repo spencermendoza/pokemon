@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { PokeContext } from './PokeContext';
 import Testing from './Testing';
 import TeamInput from './TeamInput';
@@ -10,11 +10,12 @@ import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 
 function App() {
+
+  const [first, unFirst] = useState(true);
+
+
   const useStyles = makeStyles({
     buttonStyle: {
-      display: 'flex',
-      justifyContent: 'center',
-      flexDirection: 'column',
       margin: '1%',
       backgroundColor: 'blue',
       color: 'white',
@@ -32,25 +33,64 @@ function App() {
       display: 'flex',
       justifyContent: 'space-between',
       flexDirection: 'row'
+    },
+    firstContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      margin: '0 auto',
+      width: '25%',
+      height: '500px',
+      width: '100%',
+    },
+    firstButton: {
+      margin: '1%',
+      marginTop: '10%',
+      backgroundColor: 'green',
+      color: 'white',
+      border: '1px solid white',
+      height: '45%',
+      width: '60%',
+      fontSize: '5em',
     }
   })
+
   const { handleDialog, playerTeam, addStrat, lineupDialog } = useContext(PokeContext);
 
   const classes = useStyles();
 
+  const firstVisit = (first) => {
+    const firstSubmit = () => {
+      unFirst(false);
+      this.forceUpdate();
+    }
 
-  return (
-    <div>
-      <Box className={classes.containerStyle}>
-        <button className={classes.buttonStyle} onClick={() => { handleDialog() }}>Enter Team</button>
-        <TeamInput />
-      </Box>
-      <Box className={classes.containerStyleTwo}>
-        <TeamLineup />
-        <button className={classes.buttonStyle}>Show Strategy</button>
-      </Box>
-    </div>
-  )
+    if (first) {
+      return (
+        <div className={classes.firstContainer}>
+          <Box className={classes.firstContainer}>
+            <button className={classes.firstButton} onClick={() => handleDialog()}>Enter Team</button>
+            <TeamInput />
+          </Box>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <Box className={classes.containerStyle}>
+            <button className={classes.buttonStyle} onClick={() => handleDialog()}>Enter Team</button>
+            <TeamInput />
+          </Box>
+          <Box className={classes.containerStyleTwo}>
+            <TeamLineup />
+            <button className={classes.buttonStyle}>Show Strategy</button>
+          </Box>
+        </div>
+      )
+    }
+  }
+
+  return (firstVisit(first))
+
 }
 
 export default App;
