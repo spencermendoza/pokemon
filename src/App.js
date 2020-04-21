@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 function App() {
 
-  const [first, unFirst] = useState(true);
+  const [first, setFirst] = useState(true);
 
 
   const useStyles = makeStyles({
@@ -58,38 +58,33 @@ function App() {
 
   const classes = useStyles();
 
-  const firstVisit = (first) => {
-    const firstSubmit = () => {
-      unFirst(false);
-      this.forceUpdate();
-    }
-
-    if (first) {
-      return (
-        <div className={classes.firstContainer}>
-          <Box className={classes.firstContainer}>
-            <button className={classes.firstButton} onClick={() => handleDialog()}>Enter Team</button>
-            <TeamInput />
-          </Box>
-        </div>
-      )
-    } else {
-      return (
-        <div>
-          <Box className={classes.containerStyle}>
-            <button className={classes.buttonStyle} onClick={() => handleDialog()}>Enter Team</button>
-            <TeamInput />
-          </Box>
-          <Box className={classes.containerStyleTwo}>
-            <TeamLineup />
-            <button className={classes.buttonStyle}>Show Strategy</button>
-          </Box>
-        </div>
-      )
-    }
+  const firstSubmit = () => {
+    setFirst(false);
   }
 
-  return (firstVisit(first))
+  if (first) {
+    return (
+      <div className={classes.firstContainer}>
+        <Box className={classes.firstContainer}>
+          <button className={classes.firstButton} onClick={() => handleDialog()}>Enter Team</button>
+          <TeamInput firstTime={firstSubmit} />
+        </Box>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <Box className={classes.containerStyle}>
+          <button className={classes.buttonStyle} onClick={() => handleDialog()}>Enter Team</button>
+          <TeamInput />
+        </Box>
+        <Box className={classes.containerStyleTwo}>
+          <TeamLineup />
+          <button className={classes.buttonStyle}>Show Strategy</button>
+        </Box>
+      </div>
+    )
+  }
 
 }
 

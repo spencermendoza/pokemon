@@ -11,4 +11,5 @@ export class PokemonObj {
         this.strategy = strategy;
         this.url = url;
     }
+
 }

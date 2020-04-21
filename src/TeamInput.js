@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 
-export const TeamInput = () => {
+export const TeamInput = ({ firstTime }) => {
 
     const {
         inputDialog,
@@ -23,6 +23,7 @@ export const TeamInput = () => {
 
     const handleNewTeam = () => {
         const newTeam = [first.current.value, second.current.value, third.current.value, fourth.current.value, fifth.current.value, sixth.current.value]
+        firstTime();
         handleConfirm(newTeam);
     }
 
@@ -62,6 +63,7 @@ export const TeamInput = () => {
                         inputRef={sixth}
                         defaultValue='tentacruel' />
                     <Button onClick={e => handleNewTeam()}>Confirm</Button>
+                    {/* TODO: Close the dialog and reset selected team members in state. */}
                     <Button onClick={e => handleNewTeam()}>Cancel</Button>
                 </DialogContent>
             </Dialog>
