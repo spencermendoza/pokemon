@@ -76,7 +76,7 @@ function App() {
       <div>
         <Box className={classes.containerStyle}>
           <button className={classes.buttonStyle} onClick={() => handleDialog()}>Enter Team</button>
-          <TeamInput />
+          <TeamInput firstTime={firstSubmit} />
         </Box>
         <Box className={classes.containerStyleTwo}>
           <TeamLineup />

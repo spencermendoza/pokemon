@@ -42,6 +42,16 @@ class PokeProvider extends Component {
                     const addNewProp = this.addStrat(fixedPokes);
                     this.cachePokes(addNewProp);
                 })
+        this.pullStorage();
+    }
+
+    pullStorage = () => {
+        var rememberMyTeam = JSON.parse(localStorage.getItem('playerTeam'));
+        if (rememberMyTeam) {
+            return console.log(rememberMyTeam);
+        } else {
+            return (console.log('something is not working properly'));
+        }
     }
 
     //Basic fetching, all this does is return the response of the fetch request,
@@ -52,7 +62,9 @@ class PokeProvider extends Component {
             .catch(error => console.log('Looks like you done fucked up', error));
     }
 
-    ////////////////////////////////////////////////////////Following functions happen automatically inside the componentDidMount() method://////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////Following functions happen automatically inside the componentDidMount() method:///////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //this just pulls the first 150 pokemon from the pokeapi,
     //eventually I will expand this list to include the data i need for this app,
@@ -129,7 +141,9 @@ class PokeProvider extends Component {
         this.setState({ types: types });
     }
 
-    /////////////////////////////////////////////////////////////////////////end of automatic functions/////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////end of automatic functions///////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //Handles the confirm of the dialog box, accepts the user inputted team,
     //checks it against the pokemon list stored in state,
@@ -144,11 +158,12 @@ class PokeProvider extends Component {
     //This just checks to see if the user input pokemon are on this list. 
     checkList = (array) => {
         const arr = array.map(p => p.toLowerCase());
-        const stateList = this.state.allPokes.map(p => {
+        const stateList = this.state.allPokes;
+        const justNames = stateList.map(p => {
             return p.name;
-        });
+        })
         const newArr = arr.filter(p => {
-            if (stateList.includes(p)) {
+            if (justNames.includes(p)) {
                 return p;
             } else {
                 console.log('this one didnt work: ' + p)
@@ -166,13 +181,16 @@ class PokeProvider extends Component {
         let newTeam = arr.map(p => {
             for (let i = 0; i < stateList.length; i++) {
                 if (p == stateList[i].name) {
-                    return stateList[i];
+                    const thisGuy = stateList[i];
+                    return thisGuy;
                 }
             }
         })
 
         newTeam = this.formatTeam(newTeam);
         this.setState({ playerTeam: newTeam });
+        localStorage.clear();
+        localStorage.setItem('playerTeam', JSON.stringify(newTeam));
         console.log(newTeam);
         return newTeam;
     }
@@ -192,6 +210,7 @@ class PokeProvider extends Component {
     loopThroughStrategy = (poke) => {
         let newStratList = Object.keys(poke.strategy);
         let newStrat = poke.strategy;
+        console.log(poke);
 
         for (let i = 0; i < newStratList.length; i++) {
             let thisStrat = newStratList[i];
@@ -200,6 +219,7 @@ class PokeProvider extends Component {
             }
         }
         poke.strategy = newStrat;
+        console.log(poke);
         return poke;
     }
 

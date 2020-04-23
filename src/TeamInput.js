@@ -36,32 +36,32 @@ export const TeamInput = ({ firstTime }) => {
                         type='text'
                         label='First Pokemon'
                         inputRef={first}
-                        defaultValue='mewtwo' />
+                        defaultValue='charmander' />
                     <TextField
                         type='text'
                         label='Second Pokemon'
                         inputRef={second}
-                        defaultValue='dragonite' />
+                        defaultValue='charmeleon' />
                     <TextField
                         type='text'
                         label='Third Pokemon'
                         inputRef={third}
-                        defaultValue='gengar' />
+                        defaultValue='charizard' />
                     <TextField
                         type='text'
                         label='Fourth Pokemon'
                         inputRef={fourth}
-                        defaultValue='cloyster' />
+                        defaultValue='squirtle' />
                     <TextField
                         type='text'
                         label='Fifth Pokemon'
                         inputRef={fifth}
-                        defaultValue='rhydon' />
+                        defaultValue='wartortle' />
                     <TextField
                         type='text'
                         label='Sixth Pokemon'
                         inputRef={sixth}
-                        defaultValue='tentacruel' />
+                        defaultValue='blastoise' />
                     <Button onClick={e => handleNewTeam()}>Confirm</Button>
                     {/* TODO: Close the dialog and reset selected team members in state. */}
                     <Button onClick={e => handleNewTeam()}>Cancel</Button>
