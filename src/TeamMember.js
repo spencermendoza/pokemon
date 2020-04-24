@@ -15,11 +15,7 @@ const TeamMember = ({
     poke = {},
 }) => {
 
-    const { name, img, types, strategy, url } = poke;
-    const {
-        lineupDialog,
-        teamLineup,
-    } = useContext(PokeContext)
+    const { name, img, types, strategy, url, key } = poke;
 
     const useStyles = makeStyles({
         wholeThing: {
@@ -51,7 +47,7 @@ const TeamMember = ({
     const classes = useStyles();
 
     return (
-        <div className={classes.wholeThing}>
+        < div className={classes.wholeThing} >
             <ExpansionPanel className={classes.fullPanel}>
                 <ExpansionPanelSummary>
                     <img src={poke.img} />
@@ -159,7 +155,7 @@ const TeamMember = ({
 
                 </ExpansionPanelDetails>
             </ExpansionPanel>
-        </div>
+        </div >
     );
 }
 

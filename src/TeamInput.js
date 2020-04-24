@@ -12,6 +12,8 @@ export const TeamInput = ({ firstTime }) => {
     const {
         inputDialog,
         handleConfirm,
+        handleCancel,
+        localPokes,
     } = useContext(PokeContext)
 
     const first = useRef();
@@ -21,12 +23,21 @@ export const TeamInput = ({ firstTime }) => {
     const fifth = useRef();
     const sixth = useRef();
 
+    const getLocalNames = (list) => {
+        let nameList = list.map(p => {
+            return p.name;
+        })
+        return nameList;
+    }
+
+    const nameList = getLocalNames(localPokes);
+
+
     const handleNewTeam = () => {
         const newTeam = [first.current.value, second.current.value, third.current.value, fourth.current.value, fifth.current.value, sixth.current.value]
         firstTime();
         handleConfirm(newTeam);
     }
-
     return (
         <Box>
             <Dialog open={inputDialog.open}>
@@ -36,39 +47,39 @@ export const TeamInput = ({ firstTime }) => {
                         type='text'
                         label='First Pokemon'
                         inputRef={first}
-                        defaultValue='charmander' />
+                        defaultValue={nameList[0]} />
                     <TextField
                         type='text'
                         label='Second Pokemon'
                         inputRef={second}
-                        defaultValue='charmeleon' />
+                        defaultValue={nameList[1]} />
                     <TextField
                         type='text'
                         label='Third Pokemon'
                         inputRef={third}
-                        defaultValue='charizard' />
+                        defaultValue={nameList[2]} />
                     <TextField
                         type='text'
                         label='Fourth Pokemon'
                         inputRef={fourth}
-                        defaultValue='squirtle' />
+                        defaultValue={nameList[3]} />
                     <TextField
                         type='text'
                         label='Fifth Pokemon'
                         inputRef={fifth}
-                        defaultValue='wartortle' />
+                        defaultValue={nameList[4]} />
                     <TextField
                         type='text'
                         label='Sixth Pokemon'
                         inputRef={sixth}
-                        defaultValue='blastoise' />
+                        defaultValue={nameList[5]} />
                     <Button onClick={e => handleNewTeam()}>Confirm</Button>
                     {/* TODO: Close the dialog and reset selected team members in state. */}
-                    <Button onClick={e => handleNewTeam()}>Cancel</Button>
+                    <Button onClick={e => handleCancel()}>Cancel</Button>
                 </DialogContent>
             </Dialog>
         </Box>
-    );
+    )
 };
 
 export default TeamInput;

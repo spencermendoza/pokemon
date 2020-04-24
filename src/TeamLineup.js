@@ -29,13 +29,14 @@ export const TeamLineup = () => {
 
     if (lineupDialog.open) {
         return (
-            <GridList className={classes.containerStyle} spacing={3}>
-                {playerTeam.map(poke => (
-                    <TeamMember
-                        poke={poke}
-                        key={poke.name}
-                    />
-                ))
+            < GridList className={classes.containerStyle} spacing={3} >
+                {
+                    playerTeam.map(poke => (
+                        <TeamMember
+                            poke={poke}
+                            key={poke.key}
+                        />
+                    ))
                 }
             </GridList >
         );

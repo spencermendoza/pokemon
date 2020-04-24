@@ -23,6 +23,7 @@ class PokeProvider extends Component {
         strategyDisplay: {
             open: false,
         },
+        localPokes: [],
     }
 
     //this function runs as soon as the app loads. fetches and caches all the pokemon and type data I need
@@ -37,8 +38,8 @@ class PokeProvider extends Component {
             .then(
                 ([pokeDetails, typeDetails]) => {
                     // TODO: Finalize types and pokes here!
-                    const fixedPokes = this.fixTypes(pokeDetails);
                     this.cacheTypes(typeDetails);
+                    const fixedPokes = this.fixTypes(pokeDetails);
                     const addNewProp = this.addStrat(fixedPokes);
                     this.cachePokes(addNewProp);
                 })
@@ -46,8 +47,9 @@ class PokeProvider extends Component {
     }
 
     pullStorage = () => {
-        var rememberMyTeam = JSON.parse(localStorage.getItem('playerTeam'));
+        var rememberMyTeam = JSON.parse(localStorage.getItem('cacheTeam'));
         if (rememberMyTeam) {
+            this.setState({ localPokes: rememberMyTeam })
             return console.log(rememberMyTeam);
         } else {
             return (console.log('something is not working properly'));
@@ -82,6 +84,7 @@ class PokeProvider extends Component {
             img: pokeData.sprites.front_default,
             types: pokeData.types,
             url: poke.url,
+            key: pokeData.game_index,
         }))
     }
 
@@ -155,6 +158,10 @@ class PokeProvider extends Component {
         this.handleLineup();
     }
 
+    handleCancel = () => {
+        this.handleDialog();
+    }
+
     //This just checks to see if the user input pokemon are on this list. 
     checkList = (array) => {
         const arr = array.map(p => p.toLowerCase());
@@ -167,7 +174,6 @@ class PokeProvider extends Component {
                 return p;
             } else {
                 console.log('this one didnt work: ' + p)
-                alert('This pokemon isnt on my list! ' + p)
             }
         })
         return newArr;
@@ -178,10 +184,12 @@ class PokeProvider extends Component {
     //in state for each pokemon on the list it is given
     newTeam = (arr) => {
         const stateList = this.state.allPokes;
-        let newTeam = arr.map(p => {
+        let newTeam = this.state.playerTeam;
+
+        newTeam = arr.map(p => {
             for (let i = 0; i < stateList.length; i++) {
                 if (p == stateList[i].name) {
-                    const thisGuy = stateList[i];
+                    let thisGuy = JSON.parse(JSON.stringify(stateList[i]));
                     return thisGuy;
                 }
             }
@@ -190,14 +198,12 @@ class PokeProvider extends Component {
         newTeam = this.formatTeam(newTeam);
         this.setState({ playerTeam: newTeam });
         localStorage.clear();
-        localStorage.setItem('playerTeam', JSON.stringify(newTeam));
-        console.log(newTeam);
-        return newTeam;
+        localStorage.setItem('cacheTeam', JSON.stringify(newTeam));
+        this.pullStorage();
     }
 
     formatTeam = (team) => {
         let newTeam = team.map(member => {
-            member = this.getInfo(member);
             member.name = this.capitalizeFirstLetter(member.name);
             member = this.loopThroughTypes(member);
             member = this.loopThroughStrategy(member);
@@ -210,7 +216,6 @@ class PokeProvider extends Component {
     loopThroughStrategy = (poke) => {
         let newStratList = Object.keys(poke.strategy);
         let newStrat = poke.strategy;
-        console.log(poke);
 
         for (let i = 0; i < newStratList.length; i++) {
             let thisStrat = newStratList[i];
@@ -219,7 +224,6 @@ class PokeProvider extends Component {
             }
         }
         poke.strategy = newStrat;
-        console.log(poke);
         return poke;
     }
 
@@ -426,9 +430,7 @@ class PokeProvider extends Component {
     //////////////////////Functional functions: these functions don't work directly on this app, they were just written to assist with other functions that do help with the app//////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    loopThrough = (array) => {
 
-    }
 
     //This just capitalizes the first letter of any string passed to it
     capitalizeFirstLetter = (string) => {
@@ -462,6 +464,7 @@ class PokeProvider extends Component {
                     ...this.state,
                     handleDialog: this.handleDialog,
                     handleConfirm: this.handleConfirm,
+                    handleCancel: this.handleCancel,
                     getPokes: this.getPokes,
                     cachePokes: this.cachePokes,
                     getPokeDetails: this.getPokeDetails,
