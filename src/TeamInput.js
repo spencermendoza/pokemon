@@ -24,9 +24,14 @@ export const TeamInput = ({ firstTime }) => {
     const sixth = useRef();
 
     const getLocalNames = (list) => {
-        let nameList = list.map(p => {
-            return p.name;
-        })
+        let nameList = [];
+        if (list.length > 0) {
+            nameList = list.map(p => {
+                return p.name;
+            })
+        } else {
+            nameList = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon', 'Charizard'];
+        }
         return nameList;
     }
 

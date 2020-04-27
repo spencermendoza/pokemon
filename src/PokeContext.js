@@ -200,6 +200,17 @@ class PokeProvider extends Component {
         localStorage.clear();
         localStorage.setItem('cacheTeam', JSON.stringify(newTeam));
         this.pullStorage();
+        console.log(newTeam);
+        this.createTeamStrategy(newTeam);
+    }
+
+    createTeamStrategy = (team) => {
+        let teamResistances = ['spence']
+        console.log(teamResistances);
+    }
+
+    teamResistances = (teamMember) => {
+        return teamMember.strategy.resistantTo.forEach(element => element.name);
     }
 
     formatTeam = (team) => {
