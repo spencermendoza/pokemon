@@ -50,7 +50,6 @@ class PokeProvider extends Component {
         var rememberMyTeam = JSON.parse(localStorage.getItem('cacheTeam'));
         if (rememberMyTeam) {
             this.setState({ localPokes: rememberMyTeam })
-            return console.log(rememberMyTeam);
         } else {
             return (console.log('something is not working properly'));
         }
@@ -200,17 +199,39 @@ class PokeProvider extends Component {
         localStorage.clear();
         localStorage.setItem('cacheTeam', JSON.stringify(newTeam));
         this.pullStorage();
-        console.log(newTeam);
         this.createTeamStrategy(newTeam);
     }
 
     createTeamStrategy = (team) => {
-        let teamResistances = ['spence']
-        console.log(teamResistances);
+        let teamStrategy = {
+            totalResistantTo: [],
+            totalWeakTo: [],
+            totalImmuneTo: [],
+            totalSuperResistantTo: [],
+            totalSuperWeakTo: []
+        }
+        let types = JSON.parse(JSON.stringify(this.state.types));
+        let typeStrategy = types.map(t => {
+            return {
+                name: t.name,
+                value: 0
+            }
+        })
+
+        for (let i = 0; i < team.length; i++) {
+            teamStrategy.totalResistantTo = teamStrategy.totalResistantTo.concat(team[i].strategy.resistantTo);
+            teamStrategy.totalWeakTo = teamStrategy.totalWeakTo.concat(team[i].strategy.weakTo);
+            teamStrategy.totalImmuneTo = teamStrategy.totalImmuneTo.concat(team[i].strategy.immuneTo);
+            teamStrategy.totalSuperResistantTo = teamStrategy.totalSuperResistantTo.concat(team[i].strategy.superResistantTo);
+            teamStrategy.totalSuperWeakTo = teamStrategy.totalSuperWeakTo.concat(team[i].strategy.superWeakTo);
+        }
+
+        console.log(teamStrategy);
+        console.log(typeStrategy);
     }
 
-    teamResistances = (teamMember) => {
-        return teamMember.strategy.resistantTo.forEach(element => element.name);
+    pullProperty = (obj, property) => {
+
     }
 
     formatTeam = (team) => {
