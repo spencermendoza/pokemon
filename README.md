@@ -1,3 +1,5 @@
+This app uses both React.js and the PokeAPI to accept a user's Pokemon team and returns that team back with each Pokemon's type advantages and disadvantages.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
