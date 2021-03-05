@@ -60,7 +60,7 @@ class PokeProvider extends Component {
     fetchData = (url) => {
         return fetch(url)
             .then(res => res.json())
-            .catch(error => console.log('Looks like you done fucked up', error));
+            .catch(error => console.log('Looks like you done goofed', error));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
